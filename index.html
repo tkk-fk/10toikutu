@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<title>10といくつ フラッシュカード</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f7eed1;
+    --card-bg: #fdf6e0;
+    --green: #5a8a3a;
+    --green-deep: #46702c;
+    --green-soft: #e6efd8;
+    --ink: #2a2a2a;
+    --blue: #2d7dd2;
+    --blue-soft: #e3eef9;
+    --paper: #ffffff;
+    --shadow: rgba(60, 50, 20, 0.12);
+    --muted: #7a6f4a;
+    --border: #d9cfa2;
+
+    --big-number: clamp(72px, 14vmin, 168px);
+    --box-size: clamp(96px, 18vmin, 188px);
+    --box-font: clamp(60px, 12vmin, 128px);
+    --box-border: clamp(3px, 0.6vmin, 5px);
+    --box-radius: clamp(8px, 1.2vmin, 14px);
+    --card-border: clamp(4px, 0.7vmin, 6px);
+    --card-pad-v: clamp(28px, 4.5vmin, 56px);
+    --card-pad-h: clamp(24px, 4vmin, 48px);
+    --card-radius: clamp(14px, 2vmin, 22px);
+    --connector: clamp(48px, 8vmin, 96px);
+    --gap: clamp(16px, 2.5vmin, 28px);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family: 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN',
+      'Yu Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: clamp(20px, 4vmin, 48px) 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .screen-play {
+    padding: clamp(12px, 2vmin, 24px);
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .container-play {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container-done {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* タイトル */
+  .title {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .title h1 {
+    font-size: clamp(30px, 5vmin, 42px);
+    font-weight: 900;
+    color: var(--green-deep);
+    margin: 0;
+    letter-spacing: 0.04em;
+  }
+
+  .title p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* 設定 */
+  .section {
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 16px 14px 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 0 var(--shadow);
+  }
+
+  .section-label {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--green-deep);
+    margin-bottom: 11px;
+  }
+
+  .row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .chip {
+    flex: 1;
+    padding: 13px 8px;
+    border: 2px solid var(--green);
+    background: var(--paper);
+    color: var(--green);
+    border-radius: 10px;
+    font-size: clamp(14px, 3vw, 17px);
+    font-weight: 900;
+    box-shadow: 0 2px 0 var(--shadow);
+    transition:
+      transform 0.12s,
+      background 0.15s,
+      color 0.15s,
+      box-shadow 0.15s;
+    min-height: 48px;
+  }
+
+  .chip-big {
+    font-size: clamp(20px, 4vw, 24px);
+  }
+
+  .chip.active {
+    background: var(--green);
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .chip:active {
+    transform: translateY(1px);
+  }
+
+  @media (hover: hover) {
+    .chip:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* ボタン */
+  .btn-primary {
+    width: 100%;
+    padding: 20px 0;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: clamp(20px, 4vw, 26px);
+    font-weight: 900;
+    box-shadow: 0 4px 0 var(--green-deep);
+    letter-spacing: 0.05em;
+    margin-top: 20px;
+    min-height: 58px;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+
+  .btn-primary:active {
+    transform: translateY(2px);
+  }
+
+  @media (hover: hover) {
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 16px 0;
+    background: var(--paper);
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: 0 2px 0 var(--shadow);
+    min-height: 48px;
+  }
+
+  .help-text {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+
+  .help-text .sub {
+    opacity: 0.75;
+  }
+
+  /* プレイ画面 */
+  .play-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+
+  .btn-back {
+    background: var(--paper);
+    border: 2px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 2px 0 var(--shadow);
+    min-height: 40px;
+  }
+
+  .progress {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .progress-current {
+    color: var(--green-deep);
+    font-size: 22px;
+    font-weight: 900;
+  }
+
+  .progress-sep {
+    margin: 0 4px;
+  }
+
+  .tap-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+  }
+
+  /* さくらんぼ型カード */
+  .card {
+    background: var(--card-bg);
+    border: var(--card-border) solid var(--green);
+    border-radius: var(--card-radius);
+    padding: var(--card-pad-v) var(--card-pad-h);
+    box-shadow: 0 4px 0 var(--shadow);
+    transition: transform 0.15s ease;
+  }
+
+  .tap-area:active .card {
+    transform: translateY(1px);
+  }
+
+  @media (hover: hover) {
+    .tap-area:hover .card {
+      transform: translateY(-2px);
+    }
+  }
+
+  .big-number {
+    text-align: center;
+    font-size: var(--big-number);
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .connector-svg {
+    width: 100%;
+    height: var(--connector);
+    display: block;
+  }
+
+  .connector-svg line {
+    stroke: var(--ink);
+    stroke-width: 2.8;
+    stroke-linecap: round;
+  }
+
+  .boxes {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 6px;
+    gap: var(--gap);
+  }
+
+  .num-box {
+    width: var(--box-size);
+    height: var(--box-size);
+    border: var(--box-border) solid var(--ink);
+    border-radius: var(--box-radius);
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--box-font);
+    font-weight: 900;
+    color: var(--ink);
+    transition:
+      background 0.25s,
+      color 0.25s,
+      border-color 0.25s;
+    box-shadow: 0 2px 0 var(--shadow);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .num-box.answer-box {
+    border-color: var(--blue);
+  }
+
+  .num-box.answer-revealed {
+    background: var(--blue-soft);
+    color: var(--blue);
+  }
+
+  .num-box span {
+    display: inline-block;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .hint {
+    text-align: center;
+    margin-top: clamp(14px, 2.5vmin, 24px);
+    font-size: clamp(14px, 2vmin, 18px);
+    font-weight: 700;
+    color: var(--muted);
+    min-height: 28px;
+  }
+
+  .hint.hint-revealed {
+    color: var(--green);
+  }
+
+  /* 完了 */
+  .done-card {
+    background: var(--card-bg);
+    border: var(--card-border) solid var(--green);
+    border-radius: var(--card-radius);
+    padding: clamp(36px, 6vmin, 64px) clamp(24px, 4vmin, 40px);
+    box-shadow: 0 4px 0 var(--shadow);
+    text-align: center;
+  }
+
+  .done-emoji {
+    font-size: clamp(56px, 10vmin, 96px);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .done-title {
+    font-size: clamp(28px, 5vmin, 44px);
+    font-weight: 900;
+    color: var(--green-deep);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .done-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .done-stat {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .done-actions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .done-actions .btn-primary {
+    margin-top: 0;
+  }
+
+  /* 小さい画面 */
+  @media (max-width: 380px) {
+    .screen {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .section {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .chip {
+      font-size: 13px;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+  }
+
+  /* 横向きスマホなど、高さの低い画面 */
+  @media (max-height: 520px) {
+    :root {
+      --big-number: clamp(52px, 11vmin, 92px);
+      --box-size: clamp(72px, 16vmin, 116px);
+      --box-font: clamp(44px, 10vmin, 78px);
+      --connector: clamp(30px, 7vmin, 54px);
+      --card-pad-v: clamp(12px, 2.2vmin, 24px);
+    }
+
+    .screen-play {
+      padding: 8px 12px;
+    }
+
+    .play-topbar {
+      margin-bottom: 6px;
+    }
+
+    .hint {
+      margin-top: 8px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- ============== 設定画面 ============== -->
+<div id="screen-setup" class="screen">
+  <div class="container">
+    <div class="title">
+      <h1>10と いくつ</h1>
+      <p>フラッシュカード</p>
+    </div>
+
+    <div class="section">
+      <div class="section-label">① どこを かくす？</div>
+      <div class="row" id="empty-row"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">② もんだいすう</div>
+      <div class="row" id="count-row"></div>
+    </div>
+
+    <button class="btn-primary" id="btn-start">スタート →</button>
+
+    <p class="help-text">
+      カードを タップ → こたえが でます<br>
+      もういちど タップ → つぎの もんだいへ<br>
+      <span class="sub">（PC：スペース / Enter キーでも すすみます）</span>
+    </p>
+  </div>
+</div>
+
+<!-- ============== フラッシュカード画面 ============== -->
+<div id="screen-play" class="screen screen-play" style="display:none">
+  <div class="container-play">
+    <div class="play-topbar">
+      <button class="btn-back" id="btn-back">← もどる</button>
+
+      <div class="progress" aria-live="polite">
+        <span class="progress-current" id="progress-current">1</span>
+        <span class="progress-sep">/</span>
+        <span id="progress-total">5</span>
+      </div>
+    </div>
+
+    <div
+      class="tap-area"
+      id="tap-area"
+      role="button"
+      tabindex="0"
+      aria-label="タップで答えを表示"
+    >
+      <div class="card">
+        <div class="big-number" id="play-total">17</div>
+
+        <svg
+          class="connector-svg"
+          viewBox="0 0 200 60"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <line x1="100" y1="2" x2="40" y2="58"></line>
+          <line x1="100" y1="2" x2="160" y2="58"></line>
+        </svg>
+
+        <div class="boxes">
+          <div class="num-box" id="box-left"><span>10</span></div>
+          <div class="num-box answer-box" id="box-right"><span>7</span></div>
+        </div>
+      </div>
+
+      <div class="hint" id="hint">👆 タップで こたえ</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== 完了画面 ============== -->
+<div id="screen-done" class="screen" style="display:none">
+  <div class="container-done">
+    <div class="done-card">
+      <div class="done-emoji">🌸</div>
+      <div class="done-title">おしまい！</div>
+      <div class="done-sub">ぜんぶの もんだいが おわりました</div>
+      <div class="done-stat">
+        10と いくつ・<span id="done-count">5</span>もん
+      </div>
+    </div>
+
+    <div class="done-actions">
+      <button class="btn-primary" id="btn-play-again">もういちど →</button>
+      <button class="btn-secondary" id="btn-back-from-done">
+        せっていに もどる
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // 「10と1」〜「10と10」＝ 11〜20
+  // 10問を選んでも同じ問題が重複しないようにしています。
+  const PART_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  const EMPTY_MODES = [
+    { id: 'right', label: '右側 なし' },
+    { id: 'left', label: '左側 なし' },
+    { id: 'random', label: 'ランダム' }
+  ];
+
+  const QUESTION_COUNTS = [3, 5, 10];
+
+  const state = {
+    screen: 'setup',
+    emptyMode: 'right',
+    questionCount: 5,
+    queue: [],
+    idx: 0,
+    revealed: false
+  };
+
+  function shuffle(array) {
+    const copy = array.slice();
+
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const tmp = copy[i];
+      copy[i] = copy[j];
+      copy[j] = tmp;
+    }
+
+    return copy;
+  }
+
+  function buildQueue() {
+    const selected = shuffle(PART_VALUES).slice(0, state.questionCount);
+
+    return selected.map(function (part) {
+      const answerSide =
+        state.emptyMode === 'random'
+          ? (Math.random() < 0.5 ? 'left' : 'right')
+          : state.emptyMode;
+
+      return {
+        total: 10 + part,
+        part: part,
+        answerSide: answerSide
+      };
+    });
+  }
+
+  function buildSetupUI() {
+    const emptyRow = document.getElementById('empty-row');
+
+    EMPTY_MODES.forEach(function (mode) {
+      const button = document.createElement('button');
+      button.className = 'chip';
+      button.dataset.empty = mode.id;
+      button.textContent = mode.label;
+
+      button.addEventListener('click', function () {
+        state.emptyMode = mode.id;
+        button.blur();
+        renderSetup();
+      });
+
+      emptyRow.appendChild(button);
+    });
+
+    const countRow = document.getElementById('count-row');
+
+    QUESTION_COUNTS.forEach(function (count) {
+      const button = document.createElement('button');
+      button.className = 'chip chip-big';
+      button.dataset.count = String(count);
+      button.textContent = count + '問';
+
+      button.addEventListener('click', function () {
+        state.questionCount = count;
+        button.blur();
+        renderSetup();
+      });
+
+      countRow.appendChild(button);
+    });
+  }
+
+  function showScreen(name) {
+    state.screen = name;
+
+    document.getElementById('screen-setup').style.display =
+      name === 'setup' ? '' : 'none';
+
+    document.getElementById('screen-play').style.display =
+      name === 'play' ? '' : 'none';
+
+    document.getElementById('screen-done').style.display =
+      name === 'done' ? '' : 'none';
+
+    if (name === 'setup') {
+      renderSetup();
+    } else if (name === 'play') {
+      renderPlay();
+      document.getElementById('tap-area').focus({ preventScroll: true });
+    } else if (name === 'done') {
+      renderDone();
+    }
+  }
+
+  function renderSetup() {
+    document.querySelectorAll('[data-empty]').forEach(function (button) {
+      button.classList.toggle(
+        'active',
+        button.dataset.empty === state.emptyMode
+      );
+    });
+
+    document.querySelectorAll('[data-count]').forEach(function (button) {
+      button.classList.toggle(
+        'active',
+        parseInt(button.dataset.count, 10) === state.questionCount
+      );
+    });
+  }
+
+  function renderPlay() {
+    const current = state.queue[state.idx];
+    if (!current) return;
+
+    document.getElementById('progress-current').textContent =
+      String(state.idx + 1);
+
+    document.getElementById('progress-total').textContent =
+      String(state.queue.length);
+
+    document.getElementById('play-total').textContent =
+      String(current.total);
+
+    const leftIsAnswer = current.answerSide === 'left';
+
+    // 左側を隠す場合：□ + いくつ  → 答えは10
+    // 右側を隠す場合：10 + □      → 答えはいくつ
+    const leftValue = 10;
+    const rightValue = current.part;
+
+    updateBox(
+      'box-left',
+      leftValue,
+      leftIsAnswer,
+      state.revealed
+    );
+
+    updateBox(
+      'box-right',
+      rightValue,
+      !leftIsAnswer,
+      state.revealed
+    );
+
+    const hint = document.getElementById('hint');
+
+    hint.textContent = state.revealed
+      ? '👆 タップで つぎへ'
+      : '👆 タップで こたえ';
+
+    hint.classList.toggle(
+      'hint-revealed',
+      state.revealed
+    );
+
+    document.getElementById('tap-area').setAttribute(
+      'aria-label',
+      state.revealed
+        ? 'タップで次の問題へ'
+        : 'タップで答えを表示'
+    );
+  }
+
+  function updateBox(id, value, isAnswerBox, revealed) {
+    const box = document.getElementById(id);
+    const span = box.querySelector('span');
+    const visible = !isAnswerBox || revealed;
+
+    box.classList.toggle('answer-box', isAnswerBox);
+    box.classList.toggle(
+      'answer-revealed',
+      isAnswerBox && revealed
+    );
+
+    span.textContent = String(value);
+    span.style.opacity = visible ? '1' : '0';
+    span.style.transform = visible ? 'scale(1)' : 'scale(0.6)';
+  }
+
+  function renderDone() {
+    document.getElementById('done-count').textContent =
+      String(state.queue.length);
+  }
+
+  function start() {
+    state.queue = buildQueue();
+    state.idx = 0;
+    state.revealed = false;
+    showScreen('play');
+  }
+
+  function tap() {
+    if (state.screen !== 'play') return;
+
+    if (!state.revealed) {
+      state.revealed = true;
+      renderPlay();
+      return;
+    }
+
+    if (state.idx + 1 >= state.queue.length) {
+      showScreen('done');
+      return;
+    }
+
+    state.idx += 1;
+    state.revealed = false;
+    renderPlay();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    buildSetupUI();
+
+    document
+      .getElementById('btn-start')
+      .addEventListener('click', start);
+
+    document
+      .getElementById('btn-play-again')
+      .addEventListener('click', start);
+
+    document
+      .getElementById('btn-back-from-done')
+      .addEventListener('click', function () {
+        showScreen('setup');
+      });
+
+    document
+      .getElementById('btn-back')
+      .addEventListener('click', function () {
+        showScreen('setup');
+      });
+
+    document
+      .getElementById('tap-area')
+      .addEventListener('click', tap);
+
+    window.addEventListener('keydown', function (event) {
+      const target = event.target;
+
+      if (
+        target &&
+        (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')
+      ) {
+        return;
+      }
+
+      if (state.screen === 'play') {
+        if (
+          event.key === ' ' ||
+          event.key === 'Enter' ||
+          event.key === 'ArrowRight' ||
+          event.key === 'ArrowDown'
+        ) {
+          event.preventDefault();
+          tap();
+        } else if (event.key === 'Escape') {
+          showScreen('setup');
+        }
+      } else if (state.screen === 'done') {
+        if (event.key === ' ' || event.key === 'Enter') {
+          event.preventDefault();
+          start();
+        } else if (event.key === 'Escape') {
+          showScreen('setup');
+        }
+      } else if (
+        state.screen === 'setup' &&
+        event.key === 'Enter'
+      ) {
+        event.preventDefault();
+        start();
+      }
+    });
+
+    showScreen('setup');
+  });
+})();
+</script>
+
+</body>
+</html>
